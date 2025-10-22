@@ -25,6 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
   echo json_encode(['ok' => true]);
   exit;
 }
+
+// Note: URL parameter handling is done in JavaScript, not PHP redirects
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -273,36 +275,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
         text-decoration: underline;
       }
 
-      /* Floating WhatsApp Button */
-      .whatsapp-float {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background: #25d366;
-        color: white;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3);
-        cursor: pointer;
-        transition: all 0.3s ease;
-        z-index: 1000;
-        text-decoration: none;
-      }
-
-      .whatsapp-float:hover {
-        transform: scale(1.1) rotate(5deg);
-        box-shadow: 0 12px 35px rgba(37, 211, 102, 0.4);
-      }
-
-      .whatsapp-float:active {
-        transform: scale(0.95);
-      }
-
       /* Loading Animation */
       .loading {
         display: inline-block;
@@ -457,13 +429,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
           flex-direction: column;
         }
 
-        .whatsapp-float {
-          width: 50px;
-          height: 50px;
-          bottom: 20px;
-          right: 20px;
-          font-size: 20px;
-        }
 
         .modal-content {
           margin: 10% auto;
@@ -626,15 +591,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
       </div>
     </div>
 
-    <!-- Floating WhatsApp Button -->
-    <a
-      href="https://wa.me/255784629597"
-      target="_blank"
-      class="whatsapp-float"
-      title="Contact on WhatsApp"
-    >
-      <i class="fab fa-whatsapp"></i>
-    </a>
 
     <!-- Report Modal -->
     <div id="reportModal" class="modal">
@@ -758,6 +714,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
         </table>
       </div>
     </div>
+
+    <!-- WhatsApp Float Button -->
+     <?php include 'whatsapp-float.html'; ?>
 
     <script src="data.js"></script>
     <script>
@@ -1055,7 +1014,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
           container.style.opacity = "1";
           container.style.transform = "translateY(0)";
         }, 100);
+        
+        // Check for URL parameters and auto-load student details
+        checkUrlParameters();
       });
+
+      // Function to check URL parameters and auto-load student details
+      function checkUrlParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const studentId = urlParams.get('student_id');
+        
+        if (studentId) {
+          // Set the registration number in the input field
+          document.getElementById('regNumber').value = studentId;
+          
+          // Automatically load the student image
+          setTimeout(() => {
+            loadImage();
+          }, 500); // Small delay to ensure the input is set
+        }
+      }
 
       // Tracking modal control
       function openTrackingModal() {
